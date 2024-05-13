@@ -2,26 +2,23 @@
   <section>
     <div class="q-pa-md">
       <q-select
-        v-model="splitType"
         outlined
         :bg-color="$q.dark.isActive ? 'dark' : 'white'"
+        v-model="splitType"
         :options="splitOptions"
         :map-options="true"
         label="Text Seperator"
       />
     </div>
 
-    <div
-      v-if="splitType === 'custom'"
-      class="q-px-md"
-    >
+    <div class="q-px-md" v-if="splitType === 'custom'">
       <q-input
-        v-model="customSeparator"
         label="Separator"
         bg-color="white"
         outlined
-        :disabled="annotations.length"
+        v-model="customSeparator"
         @change="separatorChanged"
+        :disabled="annotations.length"
       />
     </div>
   </section>

@@ -1,14 +1,7 @@
 <template>
   <div class="q-mx-md">
-    <p class="is-size-6 q-mb-sm">
-      Tagging Progress ({{ completed }}/{{ total }})
-    </p>
-    <q-linear-progress
-      rounded
-      size="md"
-      color="primary"
-      :value="completed / total"
-    />
+    <p class="is-size-6 q-mb-sm">Tagging Progress ({{ completed }}/{{ total }})</p>
+    <q-linear-progress rounded size="md" color="primary" :value="completed / total" />
   </div>
 </template>
 

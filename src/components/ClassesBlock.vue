@@ -1,8 +1,7 @@
+<!--defines a Vue.js component responsible for managing and displaying
+   the list of classes (or tags)-->
 <template>
-  <div
-    class="q-pa-md"
-    style="border-bottom: 1px solid #ccc;"
-  >
+  <div class="q-pa-md" style="border-bottom: 1px solid #ccc;">
     <div class="row">
       <div class="tags">
         <q-chip
@@ -13,8 +12,8 @@
           style="height: 2rem;"
           :color="cl.color.replace('11', '12')"
           clickable
-          :removable="showDeleteButtons"
           @click="setCurrentClass(index)"
+          :removable="showDeleteButtons"
           @remove="handleRemoveClass(cl.id, cl.name)"
         >
           <q-avatar
@@ -23,32 +22,28 @@
             style="height: 2rem"
             text-color="white"
             :icon="'fa fa-check'"
-          />
+          ></q-avatar>
           <q-avatar
             v-if="cl.id !== currentClass.id"
             :color="cl.color.replace('11', '12')"
             style="height: 2rem"
             text-color="white"
             font-size="16px"
-          >
-            {{ index + 1 }}
-          </q-avatar>
-          <p :class="['q-mb-none', $q.dark.isActive ? 'text-grey-3' : 'text-grey-9']">
-            {{ cl.name }}
-          </p>
+          >{{ index + 1 }}</q-avatar>
+          <p :class="['q-mb-none', $q.dark.isActive ? 'text-grey-3' : 'text-grey-9']">{{ cl.name }}</p>
         </q-chip>
       </div>
-      <q-space />
+      <q-space></q-space>
       <div class="q-mx-md">
         <q-input
-          v-if="showNewClassInput || classes.length === 0"
-          v-model="newClassName"
           bottom-slots
+          v-model="newClassName"
+          v-if="showNewClassInput || classes.length === 0"
           hint="Enter a NER Tag and click [+] to add it"
           dense
           autofocus
         >
-          <template #append>
+          <template v-slot:append>
             <q-btn
               round
               dense
@@ -71,16 +66,16 @@
       <div class="buttons">
         <q-btn
           outline
+          @click="showNewClassInput = true"
           label="New Tag"
           class="q-mr-sm"
           :color="$q.dark.isActive ? 'grey-3' : 'grey-9'"
-          @click="showNewClassInput = true"
         />
         <q-btn
           outline
+          @click="showDeleteButtons = !showDeleteButtons"
           :label="showDeleteButtons ? 'Lock Tags' : 'Edit Tags'"
           :color="$q.dark.isActive ? 'grey-3' : 'grey-9'"
-          @click="showDeleteButtons = !showDeleteButtons"
         />
       </div>
     </div>
@@ -101,15 +96,15 @@ export default {
   computed: {
     ...mapState(["classes", "currentClass", "enableKeyboardShortcuts"]),
   },
+  created() {
+    document.addEventListener('keydown', this.keypress);
+  },
   watch: {
     newClassName(now, then) {
       if (now != then) {
         this.newClassName = now.toUpperCase();
       }
     },
-  },
-  created() {
-    document.addEventListener('keydown', this.keypress);
   },
   methods: {
     ...mapMutations(["setCurrentClass"]),
@@ -129,21 +124,15 @@ export default {
       this.setCurrentClass(key - 1);
       return
     },
-    async handleRemoveClass(class_id, className) {
-      let sure = await this.confirmAction(className);
+    handleRemoveClass(class_id, className) {
+      let sure = confirm(
+        "Are you sure you want to remove the tag `" +
+          className +
+          "`?\nNOTE: This will NOT affect previously tagged entities."
+      );
       if (sure) {
         this.deleteClass(class_id);
       }
-    },
-    async confirmAction(className) {
-      return new Promise((resolve) => {
-        const result = confirm(
-          "Are you sure you want to remove the tag `" +
-            className +
-            "`?\nNOTE: This will NOT affect previously tagged entities."
-        );
-        resolve(result);
-      });
     },
     saveNewClass() {
       if (!this.newClassName) {

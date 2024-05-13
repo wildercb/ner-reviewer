@@ -3,7 +3,7 @@
     <div class="q-pa-sm q-pl-md row items-center">
       <div>
         <q-avatar size="xs">
-          <img src="@/assets/icon_32.png">
+          <img src="@/assets/icon_32.png" />
         </q-avatar>
         <span class="q-ml-sm">
           <strong>
@@ -11,55 +11,34 @@
           </strong>
         </span>
       </div>
-      <!-- 
-      <div class="cursor-pointer non-selectable">
-        <span>
-          Project
+      <div>
+        <span class="q-ml-sm">
+          <strong v-if="$store.state.currentPage === 'annotate'" style="color: rgb(207, 255, 207)">
+            | Annotation Mode |
+          </strong>
+          <strong v-else-if="$store.state.currentPage === 'review'" style="color: rgb(255, 255, 128)">
+            | Review Mode |
+          </strong>
+          <strong v-else style="color: rgb(207, 255, 207)">
+            | ISSUE WITH MENU BAR AND CURENT PAGE  |
+          </strong>
         </span>
-        <q-menu>
-          <q-list dense style="min-width: 100px">
-            <q-item clickable v-close-popup @click="promptForProject = true">
-              <q-item-section>New Project</q-item-section>
-            </q-item>
-            <q-item clickable v-close-popup>
-              <q-item-section>Open Project</q-item-section>
-            </q-item>
-            <q-item clickable v-close-popup>
-              <q-item-section>Save Project</q-item-section>
-            </q-item>
-
-            <q-separator />
-
-            <q-item clickable v-close-popup>
-              <q-item-section>Quit</q-item-section>
-            </q-item>
-          </q-list>
-        </q-menu>
       </div>
-      -->
-
       <div class="q-ml-md cursor-pointer non-selectable">
         <span>
           File
         </span>
         <q-menu style="border-radius: 0.5rem;">
-          <q-list
-            dense
-            style="min-width: 100px"
-          >
-            <q-item
-              v-close-popup
-              clickable
-              @click="pendingClick = $refs.file"
-            >
+          <q-list dense style="min-width: 100px">
+            <q-item clickable v-close-popup @click="pendingClick = $refs.file">
               <q-item-section>Open File</q-item-section>
               <input
-                ref="file"
+                @change="openFile"
                 type="file"
+                ref="file"
                 accept=".txt"
                 style="display: none"
-                @change="openFile"
-              >
+              />
             </q-item>
           </q-list>
         </q-menu>
@@ -70,24 +49,17 @@
           Annotations
         </span>
         <q-menu style="border-radius: 0.5rem;">
-          <q-list
-            dense
-            style="min-width: 100px"
-          >
+          <q-list dense style="min-width: 100px">
             <export-annotations />
-            <q-item
-              v-close-popup
-              clickable
-              @click="pendingClick = $refs.file"
-            >
+            <q-item clickable v-close-popup @click="pendingClick = $refs.file">
               <q-item-section>Import</q-item-section>
               <input
-                ref="file"
+                @change="importAnnotations"
                 type="file"
+                ref="file"
                 accept=".json"
                 style="display: none"
-                @change="importAnnotations"
-              >
+              />
             </q-item>
           </q-list>
         </q-menu>
@@ -98,30 +70,19 @@
           Tags
         </span>
         <q-menu style="border-radius: 0.5rem;">
-          <q-list
-            dense
-            style="min-width: 100px"
-          >
-            <q-item
-              v-close-popup
-              clickable
-              @click="exportTags()"
-            >
+          <q-list dense style="min-width: 100px">
+            <q-item clickable v-close-popup @click="exportTags()">
               <q-item-section>Export</q-item-section>
             </q-item>
-            <q-item
-              v-close-popup
-              clickable
-              @click="$refs.file.click()"
-            >
+            <q-item clickable v-close-popup @click="$refs.file.click()">
               <q-item-section>Import</q-item-section>
               <input
-                ref="file"
+                @change="importTags"
                 type="file"
+                ref="file"
                 accept=".json"
                 style="display: none"
-                @change="importTags"
-              >
+              />
             </q-item>
           </q-list>
         </q-menu>
@@ -141,13 +102,10 @@
         <span>Help</span>
 
         <q-menu style="border-radius: 0.5rem;">
-          <q-list
-            dense
-            style="min-width: 100px"
-          >
+          <q-list dense style="min-width: 100px">
             <q-item
-              v-close-popup
               clickable
+              v-close-popup
               href="https://github.com/tecoholic/ner-annotator/discussions"
               target="_blank"
             >
@@ -156,75 +114,48 @@
               </q-item-section>
             </q-item>
             <q-item
-              v-close-popup
               clickable
+              v-close-popup
               href="https://github.com/tecoholic/ner-annotator/issues"
               target="_blank"
             >
               Report Issue
             </q-item>
             <q-separator />
-            <q-item
-              v-close-popup
-              clickable
-              @click="showAbout = true"
-            >
+            <q-item clickable v-close-popup @click="showAbout = true">
               <q-item-section>About</q-item-section>
             </q-item>
           </q-list>
         </q-menu>
 
-        <about-dialog
-          :show="showAbout"
-          @hide="showAbout = false"
-        />
+        <about-dialog :show="showAbout" @hide="showAbout = false" />
       </div>
     </div>
   </q-header>
 
-  <q-dialog
-    v-model="promptForProject"
-    persistent
-  >
+  <q-dialog v-model="promptForProject" persistent>
     <q-card style="min-width: 350px">
       <q-card-section>
-        <div class="text-h6">
-          Project Name
-        </div>
+        <div class="text-h6">Project Name</div>
       </q-card-section>
 
       <q-card-section class="q-pt-none">
         <q-input
-          v-model="newProjectName"
           dense
+          v-model="newProjectName"
           autofocus
           @keyup.enter="promptForProject = false"
         />
       </q-card-section>
 
-      <q-card-actions
-        align="right"
-        class="text-primary"
-      >
-        <q-btn
-          v-close-popup
-          flat
-          label="Cancel"
-        />
-        <q-btn
-          v-close-popup
-          flat
-          label="Create Project"
-        />
+      <q-card-actions align="right" class="text-primary">
+        <q-btn flat label="Cancel" v-close-popup />
+        <q-btn flat label="Create Project" v-close-popup />
       </q-card-actions>
     </q-card>
   </q-dialog>
 
-  <exit-dialog
-    :show="pendingClick != null"
-    @hide="pendingClick = null"
-    @confirm="pendingClick.click()"
-  />
+  <exit-dialog :show="pendingClick != null" @hide="pendingClick = null" @confirm="pendingClick.click()"/>
 </template>
 
 <script>
@@ -236,8 +167,8 @@ import AboutDialog from "../AboutDialog.vue";
 import ExitDialog from "../ExitDialog.vue";
 
 export default {
-  name: "MenuBar",
   components: { ExportAnnotations, AboutDialog, ExitDialog },
+  name: "MenuBar",
   setup() {
     const $q = useQuasar();
     return {
